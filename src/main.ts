@@ -7,24 +7,25 @@ import {
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './http-exception.filter';
 import { table } from 'console';
-import { ServiceAccount, initializeApp, credential } from 'firebase-admin';
+import * as admin from 'firebase-admin';
 import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const { get }: ConfigService = app.get(ConfigService);
-  const adminConfig: ServiceAccount = {
-    projectId: get('_project_id'),
-    privateKey: get('_private_key').replace(/\\n/g, '\n'),
-    clientEmail: get('_client_email'),
+  const configService = app.get(ConfigService<Record<string, string>>);
+
+  const adminConfig: admin.ServiceAccount = {
+    projectId: configService.getOrThrow('project_id'),
+    privateKey: configService.getOrThrow('private_key').replace(/\\n/g, '\n'),
+    clientEmail: configService.getOrThrow('client_email'),
   };
-  initializeApp({
-    credential: credential.cert(adminConfig),
-    databaseURL: get('_databaseURL'),
+  admin.initializeApp({
+    credential: admin.credential.cert(adminConfig),
+    databaseURL: configService.getOrThrow('databaseURL'),
   });
   const config = new DocumentBuilder()
     .setTitle('Israeli Hostages API')
-    .setDescription(get('_desc'))
+    .setDescription(configService.getOrThrow('desc'))
     .setVersion('1.0')
     .addTag('persons')
     .build();
@@ -35,11 +36,9 @@ async function bootstrap() {
   app.enableCors();
   await app
     .useGlobalFilters(new HttpExceptionFilter())
-    .listen(get('PORT'), () =>
+    .listen(3000, () =>
       table(
-        `NestJS server app with swagger is up and running on http://localhost:${get(
-          'PORT',
-        )}/api`,
+        `NestJS server app with swagger is up and running on http://localhost:3000/api`,
       ),
     );
 }

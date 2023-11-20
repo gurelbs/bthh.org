@@ -134,3 +134,4 @@ dist
 data
 .vscode
 dist
+config.ts
