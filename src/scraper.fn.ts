@@ -1,4 +1,6 @@
-export async function scrapeNewsByName = functions.https.onRequest(async (request, response) => {(
+import * as fn from 'firebase-functions';
+
+export async function scrapeNewsByName = fn.https.onRequest(async (req, res) => {(
     person: Partial<Hostage>,
     lang: string = 'he',
   ): Promise<Partial<Hostage>[]> {
@@ -22,5 +24,5 @@ export async function scrapeNewsByName = functions.https.onRequest(async (reques
 
     await page.close();
     await browser.close();
-    response.send(data);    
+    res.send(data);    
   }
