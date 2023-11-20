@@ -6,7 +6,7 @@ import {
 } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './http-exception.filter';
-import { table } from 'console';
+import { info } from 'console';
 import * as admin from 'firebase-admin';
 import { ConfigService } from '@nestjs/config';
 
@@ -25,22 +25,23 @@ async function bootstrap() {
   });
   const config = new DocumentBuilder()
     .setTitle('Israeli Hostages API')
-    .setDescription(configService.getOrThrow('desc'))
+    .setDescription('description')
     .setVersion('1.0')
     .addTag('persons')
     .build();
   const options: SwaggerDocumentOptions = {};
   const document = SwaggerModule.createDocument(app, config, options);
+  const basePath = process.env.NODE_ENV === 'production' ? '/api' : '';
+  const port = process.env['PORT'] || 3000;
   SwaggerModule.setup('api', app, document);
 
   app.enableCors();
+
   await app
-    .useGlobalFilters(new HttpExceptionFilter())
-    .listen(3000, () =>
-      table(
-        `NestJS server app with swagger is up and running on http://localhost:3000/api`,
-      ),
-    );
+  .useGlobalFilters(new HttpExceptionFilter())
+  .setGlobalPrefix(basePath)
+  .listen(port, () => info(`NestJS server app with swagger is up and running on http://localhost:${port}/api`
+  ));
 }
 
 bootstrap();
