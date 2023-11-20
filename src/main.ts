@@ -31,14 +31,17 @@ async function bootstrap() {
     .build();
   const options: SwaggerDocumentOptions = {};
   const document = SwaggerModule.createDocument(app, config, options);
+  const basePath = process.env.NODE_ENV === 'production' ? '/api' : '';
   SwaggerModule.setup('api', app, document);
 
-  app.enableCors();
-  await app
+  app
+    .setGlobalPrefix(basePath)
+    .enableCors()
+    await app
     .useGlobalFilters(new HttpExceptionFilter())
-    .listen(3000, () =>
+    .listen(process.env['PORT'], () =>
       table(
-        `NestJS server app with swagger is up and running on http://localhost:3000/api`,
+        `NestJS server app with swagger is up and running on http://localhost:${process.env['PORT']}/api`,
       ),
     );
 }
