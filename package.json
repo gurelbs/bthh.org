@@ -16,7 +16,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/main",
-    "lint": "eslint \"{src}/**/*.ts\" --fix",
+    "lint": "eslint \"./src/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -28,7 +28,8 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "prebuild": "rimraf dist"
+    "prebuild": "rimraf dist",
+    "commit": "git add .; gc -m 'updated'; gp"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
