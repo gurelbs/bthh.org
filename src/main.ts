@@ -9,24 +9,23 @@ import { HttpExceptionFilter } from './http-exception.filter';
 import { config as dotenv } from 'dotenv';
 import { table } from 'console';
 // Import firebase-admin
-import * as admin from 'firebase-admin';
-import { ServiceAccount } from 'firebase-admin';
+import { ServiceAccount, initializeApp, credential } from 'firebase-admin';
 import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   dotenv();
   const app = await NestFactory.create(AppModule);
-  const configService: ConfigService = app.get(ConfigService);
+  const { get }: ConfigService = app.get(ConfigService);
   // Set the config options
   const adminConfig: ServiceAccount = {
-    projectId: configService.get<string>('projectId'),
-    privateKey: configService.get<string>('apiKey').replace(/\\n/g, '\n'),
-    clientEmail: configService.get<string>('FIREBASE_CLIENT_EMAIL'),
+    projectId: get('projectId'),
+    privateKey: get('apiKey').replace(/\\n/g, '\n'),
+    clientEmail: get('client_email'),
   };
   // Initialize the firebase admin app
-  admin.initializeApp({
-    credential: admin.credential.cert(adminConfig),
-    databaseURL: 'https://xxxxx.firebaseio.com',
+  initializeApp({
+    credential: credential.cert(adminConfig),
+    databaseURL: get('databaseURL'),
   });
   const config = new DocumentBuilder()
     .setTitle('Israeli Hostages API')
