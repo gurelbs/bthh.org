@@ -6,15 +6,15 @@ import { Hostage, CreatePersonDto } from './app.interfaces';
 export class HostageService {
   constructor(
     @Inject('PERSON_MODEL')
-    private personModel: Model<Hostage>,
+    private PersonModel: Model<Hostage>,
   ) {}
 
   async create(createPersonDto: CreatePersonDto): Promise<Hostage> {
-    const createdPerson = new this.personModel(createPersonDto);
+    const createdPerson = new this.PersonModel(createPersonDto);
     return createdPerson.save();
   }
 
   async findAll(): Promise<Hostage[]> {
-    return this.personModel.find().exec();
+    return this.PersonModel.find().exec();
   }
 }

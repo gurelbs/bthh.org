@@ -25,7 +25,7 @@ async function bootstrap() {
   });
   const config = new DocumentBuilder()
     .setTitle('Israeli Hostages API')
-    .setDescription(configService.getOrThrow('desc'))
+    .setDescription('description')
     .setVersion('1.0')
     .addTag('persons')
     .build();
