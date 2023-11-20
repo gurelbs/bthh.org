@@ -6,7 +6,7 @@ import {
 } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './http-exception.filter';
-import { table } from 'console';
+import { info } from 'console';
 import * as admin from 'firebase-admin';
 import { ConfigService } from '@nestjs/config';
 
@@ -32,18 +32,16 @@ async function bootstrap() {
   const options: SwaggerDocumentOptions = {};
   const document = SwaggerModule.createDocument(app, config, options);
   const basePath = process.env.NODE_ENV === 'production' ? '/api' : '';
+  const port = process.env['PORT'] || 3000;
   SwaggerModule.setup('api', app, document);
 
-  app
-    .setGlobalPrefix(basePath)
-    .enableCors()
-    await app
-    .useGlobalFilters(new HttpExceptionFilter())
-    .listen(process.env['PORT'], () =>
-      table(
-        `NestJS server app with swagger is up and running on http://localhost:${process.env['PORT']}/api`,
-      ),
-    );
+  app.enableCors();
+
+  await app
+  .useGlobalFilters(new HttpExceptionFilter())
+  .setGlobalPrefix(basePath)
+  .listen(port, () => info(`NestJS server app with swagger is up and running on http://localhost:${port}/api`
+  ));
 }
 
 bootstrap();
