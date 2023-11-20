@@ -28,8 +28,7 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "prebuild": "rimraf dist",
-    "commit": "git add .; gc -m 'updated'; gp"
+    "prebuild": "rimraf dist"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

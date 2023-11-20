@@ -6,30 +6,25 @@ import {
 } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './http-exception.filter';
-import { config as dotenv } from 'dotenv';
 import { table } from 'console';
-// Import firebase-admin
 import { ServiceAccount, initializeApp, credential } from 'firebase-admin';
 import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
-  dotenv();
   const app = await NestFactory.create(AppModule);
   const { get }: ConfigService = app.get(ConfigService);
-  // Set the config options
   const adminConfig: ServiceAccount = {
-    projectId: get('projectId'),
-    privateKey: get('apiKey').replace(/\\n/g, '\n'),
-    clientEmail: get('client_email'),
+    projectId: get('_project_id'),
+    privateKey: get('_private_key').replace(/\\n/g, '\n'),
+    clientEmail: get('_client_email'),
   };
-  // Initialize the firebase admin app
   initializeApp({
     credential: credential.cert(adminConfig),
-    databaseURL: get('databaseURL'),
+    databaseURL: get('_databaseURL'),
   });
   const config = new DocumentBuilder()
     .setTitle('Israeli Hostages API')
-    .setDescription(process.env.desc)
+    .setDescription(get('_desc'))
     .setVersion('1.0')
     .addTag('persons')
     .build();
@@ -40,9 +35,11 @@ async function bootstrap() {
   app.enableCors();
   await app
     .useGlobalFilters(new HttpExceptionFilter())
-    .listen(process.env['PORT'] || 3000, () =>
+    .listen(get('PORT'), () =>
       table(
-        `NestJS server app with swagger is up and running on http://localhost:3000/api`,
+        `NestJS server app with swagger is up and running on http://localhost:${get(
+          'PORT',
+        )}/api`,
       ),
     );
 }
